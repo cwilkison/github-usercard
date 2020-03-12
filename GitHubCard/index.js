@@ -3,6 +3,10 @@
            https://api.github.com/users/<your name>
 */
 
+axios.get('https://api.github.com/users/cwilkison')
+
+
+
 /* Step 2: Inspect and study the data coming back, this is YOUR 
    github info! You will need to understand the structure of this 
    data in order to use it to build your component function 
@@ -24,11 +28,89 @@
           user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const followersArray = [ 'tetondan',
+  'dustinmyers',
+  'justsml',
+  'luishrd',
+  'bigknell'];
 
 /* Step 3: Create a function that accepts a single object as its only argument,
-          Using DOM methods and properties, create a component that will return the following DOM element:
+          Using DOM methods and properties, create a component that will return the following DOM element:*/
 
+function createCard(info){
+  const cardMain = document.createElement('div');
+  const cardImage = document.createElement('img');
+  const cardInfo = document.createElement('div');
+  const cardName = document.createElement('h3');
+  const cardUser = document.createElement('p');
+  const cardLocation = document.createElement('p');
+  const cardProfile = document.createElement('p');
+  const cardAnchor = document.createElement('a');
+  const cardFollowers = document.createElement('p');
+  const cardFollowing = document.createElement('p');
+  const cardBio = document.createElement('p');
+
+  cardMain.appendChild(cardImage);
+  cardMain.appendChild(cardInfo);
+  cardInfo.appendChild(cardName);
+  cardInfo.appendChild(cardUser);
+  cardInfo.appendChild(cardLocation);
+  cardInfo.appendChild(cardProfile);
+  cardProfile.appendChild(cardAnchor);
+  cardInfo.appendChild(cardFollowers);
+  cardInfo.appendChild(cardFollowing);
+  cardInfo.appendChild(cardBio);
+
+  cardMain.classList.add('card');
+  cardInfo.classList.add('card-info');
+  cardName.classList.add('name');
+  cardUser.classList.add('username');
+
+  cardImage.src = info.avatar_url;
+  cardName.textContent = info.name;
+  cardUser.textContent = info.login; 
+  cardLocation.textContent =`Location: ${info.location}`;
+  cardProfile.textContent = "Profile: ";
+  cardAnchor.href = info.html_url;
+  cardAnchor.textContent = info.html_url;
+  cardFollowers.textContent = `Followers: ${info.followers}`;
+  cardFollowing.textContent = `Following: ${info.following}`;
+  cardBio.textContent = `Bio: ${info.bio}`;
+
+  return cardMain
+
+  }
+
+  const newCards = document.querySelector('.cards');
+
+  axios.get('https://api.github.com/users/cwilkison')
+    .then((response)=>{
+      newCards.appendChild(createCard(response.data))
+    })
+    .catch(error => {
+      console.log("error", error)
+    })
+    
+
+    
+
+
+followersArray.forEach(user => {
+  axios.get(`https://api.github.com/users/${user}`)
+  .then(followers => {
+    const cardNew = createCard(followers.data),
+      people = document.querySelector('.cards')
+      people.append(cardNew)
+  })
+  .catch(error => {
+    console.log('Error', error)
+  })
+})
+
+
+
+
+/*
 <div class="card">
   <img src={image url of user} />
   <div class="card-info">
